@@ -56,16 +56,29 @@
       margin-bottom:16px;
     }
 
+    .card-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      cursor:pointer;
+      user-select:none;
+    }
     .card-title{
       font-size:15px;
       font-weight:700;
-      margin:0 0 10px 0;
+      margin:0;
       color:#0f172a;
     }
     .card-sub{
-      margin:0 0 14px 0;
+      margin:4px 0 14px 0;
       font-size:13px;
       color:var(--muted);
+    }
+
+    .card-toggle-icon{
+      font-size:18px;
+      color:var(--muted);
+      margin-left:8px;
     }
 
     /* MENU TOMBOL GRID */
@@ -110,6 +123,13 @@
       background:#e0e7ff;
     }
 
+    footer.muted{
+      margin-top:12px;
+      font-size:12px;
+      color:var(--muted);
+      text-align:center;
+    }
+
     /* responsive */
     @media(max-width:720px){
       header{flex-direction:column;align-items:flex-start;gap:12px}
@@ -134,10 +154,16 @@
 
     <!-- ========== SECTION 1: MENU LAPORAN ========== -->
     <section class="card">
-      <h2 class="card-title">Menu Laporan</h2>
-      <p class="card-sub">Pilih jenis laporan yang ingin diakses.</p>
+      <div class="card-header" data-toggle-target="menu-laporan-list">
+        <div>
+          <h2 class="card-title">Menu Laporan</h2>
+          <p class="card-sub">Pilih jenis laporan yang ingin diakses.</p>
+        </div>
+        <span class="card-toggle-icon" data-toggle-icon>+</span>
+      </div>
 
-      <div class="menu-laporan">
+      <!-- AWALNYA DISEMBUNYIKAN -->
+      <div class="menu-laporan" id="menu-laporan-list" style="display:none;">
 
         <!-- 1. E-BISPA -->
         <div class="menu-card">
@@ -199,10 +225,15 @@
 
     <!-- ========== SECTION 2: SUMBER DATA ========== -->
     <section class="card">
-      <h2 class="card-title">Sumber Data</h2>
-      <p class="card-sub">Pilih sumber data yang digunakan untuk penyusunan laporan.</p>
+      <div class="card-header" data-toggle-target="sumber-data-list">
+        <div>
+          <h2 class="card-title">Sumber Data</h2>
+          <p class="card-sub">Pilih sumber data yang digunakan untuk penyusunan laporan.</p>
+        </div>
+        <span class="card-toggle-icon" data-toggle-icon>+</span>
+      </div>
 
-      <div class="menu-laporan">
+      <div class="menu-laporan" id="sumber-data-list" style="display:none;">
 
         <div class="menu-card">
           <button 
@@ -274,7 +305,7 @@
           </button>
         </div>
 
-                <div class="menu-card">
+        <div class="menu-card">
           <button 
             class="menu-btn" 
             data-url="https://docs.google.com/spreadsheets/d/1noDUa6MUP75L1StJG28qreHI2Zd13-9vBh2GWxbmsZE/edit?resourcekey=&pli=1&gid=1912154799#gid=1912154799"
@@ -287,11 +318,17 @@
       </div>
     </section>
 
+    <!-- ========== SECTION 3: KIRIM LAPORAN ========== -->
     <section class="card">
-      <h2 class="card-title">Kirim Laporan</h2>
-      <p class="card-sub">Kantor Direktorat Jenderal Pemasyarakatan Sulawesi Selatan</p>
+      <div class="card-header" data-toggle-target="kirim-laporan-list">
+        <div>
+          <h2 class="card-title">Kirim Laporan</h2>
+          <p class="card-sub">Kantor Direktorat Jenderal Pemasyarakatan Sulawesi Selatan</p>
+        </div>
+        <span class="card-toggle-icon" data-toggle-icon>+</span>
+      </div>
 
-      <div class="menu-laporan">
+      <div class="menu-laporan" id="kirim-laporan-list" style="display:none;">
 
         <div class="menu-card">
           <button 
@@ -345,7 +382,9 @@
 
       </div>
     </section>
-       <section class="card">
+
+    <!-- ========== SECTION 4: PENGECEKAN DATA (TETAP TERBUKA / OPSI) ========== -->
+    <section class="card">
       <h2 class="card-title">Pengecekan Data</h2>
       <p class="card-sub">PK dan UPT</p>
 
@@ -381,8 +420,6 @@
           </button>
         </div>
 
-        
-
       </div>
     </section>
 
@@ -394,22 +431,31 @@
     document.querySelectorAll('.menu-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const url = btn.getAttribute('data-url');
-        if(!url) return;
-
-        // Buka di tab baru
+        if(!url || url === '#') return;
         window.open(url, '_blank');
       });
     });
 
     // Tombol "Beranda"
     document.getElementById('btn-home').addEventListener('click', ()=>{
-      // Ganti '#' dengan link beranda kamu
       window.location.href = '#';
+    });
+
+    // Generic toggle untuk semua .card-header yang punya data-toggle-target
+    document.querySelectorAll('.card-header[data-toggle-target]').forEach(header=>{
+      const targetId = header.getAttribute('data-toggle-target');
+      const targetEl = document.getElementById(targetId);
+      const iconEl = header.querySelector('[data-toggle-icon]');
+
+      header.addEventListener('click', ()=>{
+        if(!targetEl) return;
+        const isHidden = (targetEl.style.display === 'none' || targetEl.style.display === '');
+        targetEl.style.display = isHidden ? 'grid' : 'none';
+        if(iconEl){
+          iconEl.textContent = isHidden ? '−' : '+';
+        }
+      });
     });
   </script>
 </body>
 </html>
-
-
-
-
