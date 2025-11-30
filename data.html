@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Operator Lapas/Rutan Sulawesi Selatan</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #333;
+        }
+        .form-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            max-width: 480px;
+            margin: 0 auto 30px auto;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #007bff;
+            border-radius: 8px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.25s;
+        }
+        button:hover { background: #005fcc; }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            font-size: 15px;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:hover { background: #f4faff; }
+        .btn-edit { background: #ffc107; }
+        .btn-edit:hover { background: #d4a306; }
+        .btn-del { background: #dc3545; }
+        .btn-del:hover { background: #b52a36; }
+    </style>
+</head>
+<body>
+
+<h2>Data Operator — Lapas / Rutan Sulawesi Selatan</h2>
+
+<div class="form-box">
+    <label>Nama Operator</label>
+    <input type="text" id="name" placeholder="Masukkan nama operator">
+
+    <label style="margin-top:15px; display:block;">No HP</label>
+    <input type="text" id="phone" placeholder="08xxxxxxxxxx">
+
+    <label style="margin-top:15px; display:block;">Pilih Lapas / Rutan</label>
+    <select id="facility">
+        <option>Lapas Kelas I Makassar</option>
+        <option>Rutan Kelas I Makassar</option>
+        <option>Lapas Kelas II A Bulukumba</option>
+        <option>Lapas Kelas II A Palopo</option>
+        <option>Lapas Kelas II A Parepare</option>
+        <option>Lapas Kelas II A Watampone</option>
+        <option>Lapas Kelas II B Takalar</option>
+        <option>Lapas Narkotika Kelas II A Sungguminasa</option>
+        <option>Rutan Kelas II B Bantaeng</option>
+        <option>Rutan Kelas II B Barru</option>
+        <option>Rutan Kelas II B Enrekang</option>
+        <option>Rutan Kelas II B Jeneponto</option>
+        <option>Rutan Kelas II B Pinrang</option>
+        <option>Rutan Kelas II B Selayar</option>
+        <option>Rutan Kelas II B Sidrap</option>
+        <option>Rutan Kelas II B Sinjai</option>
+        <option>Rutan Kelas II B Soppeng</option>
+        <option>Lapas Perempuan Kelas II A Sungguminasa</option>
+        <option>Lapas Khusus Anak Kelas II Maros</option>
+        <option>Rutan Kelas II B Pangkep</option>
+      
+    </select>
+
+    <button onclick="addData()">Tambah Operator</button>
+</div>
+
+<div style="max-width:480px;margin:0 auto 20px auto;">
+    <label style="font-weight:600;">Cari berdasarkan Lapas / Rutan</label>
+    <input type="text" id="search" placeholder="Ketik nama Lapas/Rutan..." onkeyup="render()">
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nama Operator</th>
+            <th>No HP</th>
+            <th>Lapas / Rutan</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody id="dataBody"></tbody>
+</table>
+
+<script>
+let data = JSON.parse(localStorage.getItem("operatorData")) || [];
+
+function save() { localStorage.setItem("operatorData", JSON.stringify(data)); }
+
+function render() {
+    const body = document.getElementById("dataBody");
+    const key = document.getElementById("search")?.value.toLowerCase() || "";
+    body.innerHTML = "";
+
+    const filtered = data.filter(d => d.facility.toLowerCase().includes(key));
+
+    filtered.forEach((d, i) => {
+        body.innerHTML += `
+            <tr>
+                <td>${d.name}</td>
+                <td>${d.phone}</td>
+                <td>${d.facility}</td>
+                <td>
+                    <button class="btn-edit" onclick="editData(${i})">Edit</button>
+                    <button class="btn-del" onclick="deleteData(${i})">Hapus</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function addData() {
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const facility = document.getElementById("facility").value;
+
+    if (!name || !phone) return alert("Nama dan No HP wajib diisi!");
+
+    data.push({ name, phone, facility });
+    save(); render();
+
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+}
+
+function deleteData(i) {
+    if (confirm("Yakin ingin menghapus data?")) {
+        data.splice(i, 1);
+        save(); render();
+    }
+}
+
+function editData(i) {
+    const newName = prompt("Edit nama:", data[i].name);
+    const newPhone = prompt("Edit No HP:", data[i].phone);
+
+    if (newName && newPhone) {
+        data[i].name = newName;
+        data[i].phone = newPhone;
+        save(); render();
+    }
+}
+
+render();
+</script>
+
+</body>
+</html>
+
