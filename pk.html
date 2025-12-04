@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Daftar Nama PK & No HP</title>
+  <style>
+    :root{ --bg:#f5f7fb; --card:#ffffff; --muted:#6b7280; --accent:#2563eb }
+    *{box-sizing:border-box}
+    body{font-family:Inter,ui-sans-serif,system-ui,Helvetica,Arial;background:var(--bg);margin:0;padding:30px;color:#111}
+    .container{max-width:1100px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    .card{background:var(--card);border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.06);padding:16px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    input[type="search"]{padding:8px 12px;border-radius:8px;border:1px solid #e6e9ef;min-width:220px}
+    button{background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .btn-ghost{background:transparent;color:var(--accent);border:1px solid #dbeafe}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #eef2f7}
+    th{background:#fbfdff;position:sticky;top:0}
+    tr:hover td{background:#fbfcff}
+    .muted{color:var(--muted);font-size:13px}
+    @media (max-width:720px){
+      table,thead,tbody,tr,th,td{display:block}
+      th{position:relative}
+      td{padding:8px 0;border-bottom:0}
+      tr{margin-bottom:12px;background:#fff;padding:10px;border-radius:8px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Daftar Nama PK & No HP</h1>
+      <div class="muted">Total: <span id="count">0</span></div>
+    </header>
+
+    <div class="card">
+      <div class="controls">
+        <input id="search" type="search" placeholder="Cari nama atau nomor..." />
+        <button id="clear">Bersihkan</button>
+        <button id="download">Unduh CSV</button>
+      </div>
+
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th data-key="name">Nama PK</th>
+            <th data-key="phone">No HP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows akan diisi oleh script -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const data = [
+  ["A. Marwan Eryansyah","081280591133"],
+["Abd. Salam","081283413227"],
+["Abdul Gani","081242007837"],
+["Abdul Haris","085242022001"],
+["Abdul Rahman","0-"],
+["Achmad Yani Nasrum","08990629919"],
+["Aditya Endah Wulandari","082192143264"],
+["Adri Herfiandi","085255886833"],
+["Agusman","081270424852"],
+["Agustiani Sambo Layuk","081241647064"],
+["Ahmad Wijaya","082187115462"],
+["Aisyah","085399009881"],
+["Aisyah","085242768781"],
+["Akbar Hajrianto","082163444700"],
+["Akmal","081241852988"],
+["Aksha Gani","085104474647"],
+["Alamsyah","085242080098"],
+["Alvian Deny Puguh Vidiasana","082220250595"],
+["Amiliyana Amir","08114446969"],
+["Aminuddin","085256610924"],
+["Aminuddin Dg Lau","081290874916"],
+["Ananda Nugraha Ekaputra Rusda","081344272471"],
+["Andi Akbar Catradi","085340859098"],
+["Andi Haidir Indar","085299560250"],
+["Andi Imam Wahyudi","082323631960"],
+["Andi Immawati Makmur","082290033334"],
+["Andi Moh Hamka","081342028842"],
+["Andi Muhammad Sazli","081354885533"],
+["Andi Nurmala Sunusi","085189677418"],
+["Andi Suriadi","085346116231"],
+["Andri Sanjaya","082194601850"],
+["Astria","085299763475"],
+["Atik","085399076469"],
+["Baharuddin","082345317572"],
+["Dian Ulpa","081355594605"],
+["Eko Purnomo","081244920429"],
+["Eko Rizki Zakaria","085399958222"],
+["Fadlan Sahan","081281801251"],
+["Faradillah Alwi","085399881948"],
+["FX Galih Widyawan","082226874844"],
+["Germanto","081343755442"],
+["Guntur Manasyeh Sumule","082314950064"],
+["H. Hirwan","082399442422"],
+["Soeardy","082193195338"],
+["Hajar Aswad","082390688887"],
+["Hamzah","082331908699"],
+["Harliana","081280217676"],
+["Harliyanti","081243002200"],
+["Hasim","081236760119"],
+["Heriadi","085397193860"],
+["Dahlia","08124125778"],
+["Husnul Khatimah","081946130362"],
+["I Tri Umbara Artama","082189680360"],
+["Irwan Soho","085391844790"],
+["Ismail Adi Nugroho","081342234407"],
+["Jaelani","081342758342"],
+["Juansha Yudystira","0895618738902"],
+["Junaid","081242786019"],
+["Jurman","081355208064"],
+["Kartini","082190419473"],
+["Lukman","082318441969"],
+["Lutfi Bagus Setiawan","087861649560"],
+["M. Firdaus","082188066106"],
+["M. Syahruddin","081384184215"],
+["Mannan Nur","081354813011"],
+["Mardhiyyah","085740549323"],
+["Mirdedes","085343513533"],
+["Moch. Fauzan Zarkasi","082190834645"],
+["Muh Iqbal Rahman","081340964216"],
+["Muh. Ikhsan Irmansyah","085342382018"],
+["Muh. Rusdi","085242872739"],
+["Muhaeminah","085299339930"],
+["Muhammad Faisal Ramadani","081355614678"],
+["Muhammad Ilham Taufiq Saleh","081342215356"],
+["Muhammad Riyadi Mulyadi","082343797878"],
+["Muhammad Sudirman","082350159999"],
+["Muhammad Yunus","081242141929"],
+["Musdalifa","085399818303"],
+["Nawir","085341587769"],
+["Nur Fajri Syarifuddin","085242138984"],
+["Nurul Fauziah","082296810245"],
+["Purwanto Yuwono","081328431791"],
+["Putri Saribanong","082290297395"],
+["Rakhmat Kurnia","085255553006"],
+["Ratna Kartika Sari","081288810581"],
+["Ratna Koki","081355984650"],
+["Ridha Suryadin","082255842521"],
+["Rini Andriasih","085399757781"],
+["Risma Hamzah","085242663571"],
+["Riswan","085242815337"],
+["Rosliani","081242782869"],
+["Rosmiati","085242085707"],
+["Sahabuddin","085952461648"],
+["Suardi","0895800770923"],
+["Suwarni Abdullah","082393049279"],
+["Syahruddin","085150988282"],
+["Syufarman Radjab","082154303395"],
+["Tidak Diketahui","0-"],
+["Ulfiani Syam","087841766676"],
+["Vanni","085299195716"],
+["Vivi Mulia Pratamaningtyas","085322668858"],
+["Wa Ode Isnaeni","082193351090"],
+["Wahyuddin L","085255646372"],
+["Wisnu Aminullah Pratomo","085299922255"],
+["Yusak Sambolayuk","081355440636"],
+["Zainuddin Bahar","081355779594"],
+["Ana Wahyuni","081325763407"],
+["Mustika Amalia","085212214784"]
+];
+
+    const tbody = document.querySelector('#tbl tbody');
+    const search = document.getElementById('search');
+    const clearBtn = document.getElementById('clear');
+    const downloadBtn = document.getElementById('download');
+    const countEl = document.getElementById('count');
+
+    function render(rows){
+      tbody.innerHTML = '';
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        const td1 = document.createElement('td'); td1.textContent = r[0];
+        const td2 = document.createElement('td'); td2.textContent = r[1];
+        tr.appendChild(td1); tr.appendChild(td2);
+        tbody.appendChild(tr);
+      });
+      countEl.textContent = rows.length;
+    }
+
+    // initial render
+    render(data);
+
+    function normalize(s){ return (s||'').toString().toLowerCase(); }
+
+    search.addEventListener('input', ()=>{
+      const q = normalize(search.value.trim());
+      if(!q) return render(data);
+      const filtered = data.filter(r => normalize(r[0]).includes(q) || normalize(r[1]).includes(q));
+      render(filtered);
+    });
+
+    clearBtn.addEventListener('click', ()=>{ search.value=''; render(data); search.focus(); });
+
+    downloadBtn.addEventListener('click', ()=>{
+      const rows = [["Nama PK","No HP"], ...Array.from(tbody.querySelectorAll('tr')).map(tr=>[tr.children[0].textContent, tr.children[1].textContent])];
+      const csv = rows.map(r => r.map(c=>`"${(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'daftar_pk.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // simple column sort when clicking header
+    document.querySelectorAll('th').forEach((th,idx)=>{
+      th.style.cursor='pointer';
+      th.addEventListener('click', ()=>{
+        const key = th.dataset.key;
+        const asc = th.dataset.asc === 'true' ? false : true; // toggle
+        th.dataset.asc = asc;
+        const sorted = [...data].sort((a,b)=>{
+          const A = a[idx].toString().toLowerCase(); const B = b[idx].toString().toLowerCase();
+          return A < B ? (asc? -1:1) : A > B ? (asc?1:-1) : 0;
+        });
+        render(sorted);
+      });
+    });
+  </script>
+</body>
+</html>
